@@ -1,0 +1,16 @@
+PODS:
+  - KKDeviceInsightKit (0.1.0)
+
+DEPENDENCIES:
+  - KKDeviceInsightKit (from `../`)
+
+EXTERNAL SOURCES:
+  KKDeviceInsightKit:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  KKDeviceInsightKit: 00fc13fca695763e1b70ddb0449baea2bf7cd35d
+
+PODFILE CHECKSUM: d4076ddca589ba849aefee147c4460e9a16336cf
+
+COCOAPODS: 1.16.2

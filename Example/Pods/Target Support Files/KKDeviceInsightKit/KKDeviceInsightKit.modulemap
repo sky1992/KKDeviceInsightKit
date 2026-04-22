@@ -1,0 +1,6 @@
+framework module KKDeviceInsightKit {
+  umbrella header "KKDeviceInsightKit-umbrella.h"
+
+  export *
+  module * { export * }
+}
