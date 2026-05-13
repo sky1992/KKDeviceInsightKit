@@ -23,15 +23,27 @@
     CNAuthorizationStatus s = [CNContactStore authorizationStatusForEntityType:CNEntityTypeContacts];
     if (s == CNAuthorizationStatusAuthorized) return [self result:KKPermissionStatusAllowed first:NO];
     if (s == CNAuthorizationStatusLimited) return [self result:KKPermissionStatusLimited first:NO];
-    if (s == CNAuthorizationStatusNotDetermined) return [self result:KKPermissionStatusDenied first:YES];
     return [self result:KKPermissionStatusDenied first:NO];
 }
 + (KKPermissionResult *)camera_permission {
     AVAuthorizationStatus s = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
     if (s == AVAuthorizationStatusAuthorized) return [self result:KKPermissionStatusAllowed first:NO];
-    if (s == AVAuthorizationStatusNotDetermined) return [self result:KKPermissionStatusDenied first:YES];
     return [self result:KKPermissionStatusDenied first:NO];
 }
+
++ (KKPermissionResult *)contacts_first_permission {
+    CNAuthorizationStatus s = [CNContactStore authorizationStatusForEntityType:CNEntityTypeContacts];
+    if (s == CNAuthorizationStatusAuthorized) return [self result:KKPermissionStatusAllowed first:YES];
+    if (s == CNAuthorizationStatusLimited) return [self result:KKPermissionStatusLimited first:YES];
+    return [self result:KKPermissionStatusDenied first:YES];
+}
++ (KKPermissionResult *)camera_first_permission {
+    AVAuthorizationStatus s = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+    if (s == AVAuthorizationStatusAuthorized) return [self result:KKPermissionStatusAllowed first:YES];
+    return [self result:KKPermissionStatusDenied first:YES];
+}
+
+
 + (void)notification_permission:(void(^)(KKPermissionResult *))completion {
     [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
         if (settings.authorizationStatus == UNAuthorizationStatusNotDetermined) {
@@ -50,7 +62,7 @@
         completion([self contacts_permission]); return;
     }
     [[[CNContactStore alloc] init] requestAccessForEntityType:CNEntityTypeContacts completionHandler:^(BOOL granted, NSError * _Nullable error) {
-        completion([self contacts_permission]);
+        completion([self contacts_first_permission]);
     }];
 }
 + (void)request_camera_permission:(void(^)(KKPermissionResult *))completion {
@@ -58,7 +70,7 @@
         completion([self camera_permission]); return;
     }
     [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
-        completion([self camera_permission]);
+        completion([self camera_first_permission]);
     }];
 }
 @end
