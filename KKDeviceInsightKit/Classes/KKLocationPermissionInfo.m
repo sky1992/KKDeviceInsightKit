@@ -23,22 +23,32 @@ static KKLocationDelegateOC *_kk_loc_delegate = nil;
     }
 }
 + (KKPermissionResult *)location_permission {
-    CLAuthorizationStatus s = [CLLocationManager authorizationStatus];
+    CLAuthorizationStatus s = _kk_loc_mgr.authorizationStatus;
     KKPermissionResult *r = [KKPermissionResult new];
     if (s == kCLAuthorizationStatusAuthorizedAlways || s == kCLAuthorizationStatusAuthorizedWhenInUse) r.status = KKPermissionStatusAllowed;
-    else if (s == kCLAuthorizationStatusNotDetermined) { r.status = KKPermissionStatusDenied; r.is_first_system_choice = YES; return r; }
     else r.status = KKPermissionStatusDenied;
     r.is_first_system_choice = NO;
     return r;
 }
+
++ (KKPermissionResult *)location_change_permission {
+    CLAuthorizationStatus s = _kk_loc_mgr.authorizationStatus;
+    KKPermissionResult *r = [KKPermissionResult new];
+    if (s == kCLAuthorizationStatusAuthorizedAlways || s == kCLAuthorizationStatusAuthorizedWhenInUse) r.status = KKPermissionStatusAllowed;
+    else r.status = KKPermissionStatusDenied;
+    r.is_first_system_choice = YES;
+    return r;
+}
+
 + (void)request_location_permission:(void(^)(KKPermissionResult *))completion {
-    CLAuthorizationStatus s = [CLLocationManager authorizationStatus];
+    CLAuthorizationStatus s = _kk_loc_mgr.authorizationStatus;
     if (s != kCLAuthorizationStatusNotDetermined) { completion([self location_permission]); return; }
     _kk_loc_delegate.permission_completion = completion;
     dispatch_async(dispatch_get_main_queue(), ^{ [_kk_loc_mgr requestWhenInUseAuthorization]; });
 }
+
 + (void)request_location_coordinate_string:(void(^)(KKPermissionResult *, NSString *, NSString *))completion {
-    CLAuthorizationStatus s = [CLLocationManager authorizationStatus];
+    CLAuthorizationStatus s = _kk_loc_mgr.authorizationStatus;
     void (^start)(void) = ^{
         [_kk_loc_delegate.lock lock];
         _kk_loc_delegate.coordinate_completion = completion;
@@ -62,11 +72,11 @@ static KKLocationDelegateOC *_kk_loc_delegate = nil;
 
 @implementation KKLocationDelegateOC (Callbacks)
 - (void)locationManagerDidChangeAuthorization:(CLLocationManager *)manager {
-    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined) return;
+    if (manager.authorizationStatus; == kCLAuthorizationStatusNotDetermined) return;
     if (self.permission_completion) {
         void (^cb)(KKPermissionResult *) = self.permission_completion;
         self.permission_completion = nil;
-        cb([KKLocationPermissionInfo location_permission]);
+        cb([KKLocationPermissionInfo location_change_permission]);
     }
 }
 - (void)finishCoordinateOnce:(NSString *)lat lon:(NSString *)lon {
