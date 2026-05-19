@@ -72,7 +72,7 @@ static KKLocationDelegateOC *_kk_loc_delegate = nil;
 
 @implementation KKLocationDelegateOC (Callbacks)
 - (void)locationManagerDidChangeAuthorization:(CLLocationManager *)manager {
-    if (manager.authorizationStatus; == kCLAuthorizationStatusNotDetermined) return;
+    if (manager.authorizationStatus == kCLAuthorizationStatusNotDetermined) return;
     if (self.permission_completion) {
         void (^cb)(KKPermissionResult *) = self.permission_completion;
         self.permission_completion = nil;
