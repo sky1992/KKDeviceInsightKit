@@ -3,7 +3,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface KKSystemServicePara : NSObject
-+ (NSDictionary<NSString *, id> *)system_service_para;
++ (void)system_service_para:(void(^)(NSDictionary<NSString *,id> * para))completion;
 @end
 
 NS_ASSUME_NONNULL_END

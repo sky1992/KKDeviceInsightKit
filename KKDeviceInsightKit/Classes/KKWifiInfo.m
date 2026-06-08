@@ -4,25 +4,12 @@
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 
 @implementation KKWifiInfo
-+ (NSString *)wifi_name {
-    NSArray *interfaces = CFBridgingRelease(CNCopySupportedInterfaces());
-    if (![interfaces isKindOfClass:[NSArray class]]) return @"null";
-    for (NSString *interface in interfaces) {
-        NSDictionary *info = CFBridgingRelease(CNCopyCurrentNetworkInfo((__bridge CFStringRef)interface));
-        NSString *ssid = info[@"SSID"];
-        if (ssid.length > 0) return ssid;
-    }
-    return @"null";
-}
-+ (NSString *)wifi_bssid {
-    NSArray *interfaces = CFBridgingRelease(CNCopySupportedInterfaces());
-    if (![interfaces isKindOfClass:[NSArray class]]) return @"null";
-    for (NSString *interface in interfaces) {
-        NSDictionary *info = CFBridgingRelease(CNCopyCurrentNetworkInfo((__bridge CFStringRef)interface));
-        NSString *bssid = info[@"BSSID"];
-        if (bssid.length > 0) return bssid;
-    }
-    return @"null";
++ (void)wifi_info:(void(^)(NSString * _Nullable ssid, NSString * _Nullable bssid))completion {
+    [NEHotspotNetwork fetchCurrentWithCompletionHandler:^(NEHotspotNetwork * _Nullable currentNetwork) {
+        NSString *ssid = currentNetwork.SSID ?: @"null";
+        NSString *bssid = currentNetwork.BSSID ?: @"null";
+        completion(ssid, bssid);
+    }];
 }
 + (NSString *)is_vpn {
     NSDictionary *proxy = CFBridgingRelease(CFNetworkCopySystemProxySettings());
