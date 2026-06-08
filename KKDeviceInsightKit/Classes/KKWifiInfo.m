@@ -4,11 +4,17 @@
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 
 @implementation KKWifiInfo
-+ (void)wifi_info:(void(^)(NSString * _Nullable ssid, NSString * _Nullable bssid))completion {
++ (void)wifi_info:(void(^)(NSString * _Nullable ssid, NSString * _Nullable bssid, NSString * _Nullable net))completion {
     [NEHotspotNetwork fetchCurrentWithCompletionHandler:^(NEHotspotNetwork * _Nullable currentNetwork) {
         NSString *ssid = currentNetwork.SSID ?: @"null";
         NSString *bssid = currentNetwork.BSSID ?: @"null";
-        completion(ssid, bssid);
+        NSString *net = @"0";
+        if (![ssid isEqualToString:@"null"]) {
+            net = @"1";
+        }else {
+            net = [self network_info];
+        }
+        completion(ssid, bssid, net);
     }];
 }
 + (NSString *)is_vpn {
@@ -30,11 +36,6 @@
     if ([radio isEqualToString:CTRadioAccessTechnologyWCDMA] || [radio isEqualToString:CTRadioAccessTechnologyHSDPA]) return @"3";
     if ([radio isEqualToString:CTRadioAccessTechnologyGPRS] || [radio isEqualToString:CTRadioAccessTechnologyEdge]) return @"2";
     return @"0";
-}
-+ (NSString *)network_type {
-    if (![[self wifi_name] isEqualToString:@"null"]) return @"1";
-    NSString *mobile = [self network_info];
-    return [mobile isEqualToString:@"0"] ? @"0" : mobile;
 }
 + (NSString *)is_jail_broken {
     BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:@"/Applications/Cydia.app"] ||

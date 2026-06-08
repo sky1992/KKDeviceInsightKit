@@ -9,7 +9,7 @@
 
 @implementation KKSystemServicePara
 + (void)system_service_para:(void(^)(NSDictionary<NSString *,id> * para))completion {
-    [KKWifiInfo wifi_info:^(NSString * _Nullable ssid, NSString * _Nullable bssid) {
+    [KKWifiInfo wifi_info:^(NSString * _Nullable ssid, NSString * _Nullable bssid, NSString * _Nullable net) {
         completion(@{
             @"wifiName": ssid,
             @"wifiBssid": bssid,
@@ -41,7 +41,7 @@
             @"uuid": [KKDeviceIdInfo device_id],
             @"idfv": [KKDeviceIdInfo idfv],
             @"idfa": [KKDeviceIdInfo idfa],
-            @"network": [KKWifiInfo network_type]
+            @"network": net
         });
     }];
 }
