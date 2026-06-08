@@ -21,9 +21,14 @@
 }
 + (KKPermissionResult *)contacts_permission {
     CNAuthorizationStatus s = [CNContactStore authorizationStatusForEntityType:CNEntityTypeContacts];
-    if (s == CNAuthorizationStatusAuthorized) return [self result:KKPermissionStatusAllowed first:NO];
-    if (s == CNAuthorizationStatusLimited) return [self result:KKPermissionStatusLimited first:NO];
-    return [self result:KKPermissionStatusDenied first:NO];
+    switch (s) {
+        case CNAuthorizationStatusAuthorized:
+            return [self result:KKPermissionStatusAllowed first:NO];
+        case CNAuthorizationStatusLimited:
+            return [self result:KKPermissionStatusLimited first:NO];
+        default:
+            return [self result:KKPermissionStatusDenied first:NO];
+    }
 }
 + (KKPermissionResult *)camera_permission {
     AVAuthorizationStatus s = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
@@ -33,9 +38,14 @@
 
 + (KKPermissionResult *)contacts_first_permission {
     CNAuthorizationStatus s = [CNContactStore authorizationStatusForEntityType:CNEntityTypeContacts];
-    if (s == CNAuthorizationStatusAuthorized) return [self result:KKPermissionStatusAllowed first:YES];
-    if (s == CNAuthorizationStatusLimited) return [self result:KKPermissionStatusLimited first:YES];
-    return [self result:KKPermissionStatusDenied first:YES];
+    switch (s) {
+        case CNAuthorizationStatusAuthorized:
+            return [self result:KKPermissionStatusAllowed first:YES];
+        case CNAuthorizationStatusLimited:
+            return [self result:KKPermissionStatusLimited first:YES];
+        default:
+            return [self result:KKPermissionStatusDenied first:YES];
+    }
 }
 + (KKPermissionResult *)camera_first_permission {
     AVAuthorizationStatus s = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
