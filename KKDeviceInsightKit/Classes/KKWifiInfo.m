@@ -1,6 +1,6 @@
 #import "KKWifiInfo.h"
 #import <SystemConfiguration/CaptiveNetwork.h>
-#import <CFNetwork/CFNetwork.h>
+#import <NetworkExtension/NetworkExtension.h>
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 
 @implementation KKWifiInfo
