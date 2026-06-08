@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'KKDeviceInsightKit'
-  s.version          = '0.1.7'
+  s.version          = '0.1.8'
   s.summary          = 'A short description of KKDeviceInsightKit.'
 
 # This description is used to generate tags and improve search results.
@@ -28,7 +28,7 @@ KKDeviceInsightKit
   s.source           = { :git => 'https://github.com/sky1992/KKDeviceInsightKit.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
-  s.ios.deployment_target = '10.0'
+  s.ios.deployment_target = '15.0'
 
   s.source_files = 'KKDeviceInsightKit/Classes/**/*'
   
