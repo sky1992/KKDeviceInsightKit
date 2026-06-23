@@ -1,13 +1,8 @@
 #import "KKSystemServicePara.h"
-#import "KKWifiInfo.h"
-#import "KKDeviceMemoryInfo.h"
-#import "KKDeviceSystemInfo.h"
-#import "KKDeviceScreenInfo.h"
-#import "KKDeviceBaseInfo.h"
-#import "KKApplicationInfo.h"
-#import "KKDeviceIdInfo.h"
+
 
 @implementation KKSystemServicePara
+
 + (void)system_service_para:(void(^)(NSDictionary<NSString *,id> * para))completion {
     [KKWifiInfo wifi_info:^(NSString * _Nullable ssid, NSString * _Nullable bssid, NSString * _Nullable net) {
         completion(@{
@@ -45,4 +40,6 @@
         });
     }];
 }
+
+
 @end

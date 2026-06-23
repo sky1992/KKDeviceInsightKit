@@ -10,13 +10,10 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface KKAddressBookInfo : NSObject
-+ (NSString *)mobile_regex_pattern;
-+ (NSArray<KKRawContactItem *> *)fetch_raw_contacts;
++ (BOOL)is_valid_mobile_phone:(NSString *)phone;
++ (NSString *)normalize_india_local_prefix:(NSString *)phone;
 + (NSArray<NSArray<NSDictionary<NSString *, NSString *> *> *> *)build_contact_batches:(NSInteger)max_count
                                                                              per_count:(NSInteger)per_count;
-+ (NSArray<NSArray<NSDictionary<NSString *, NSString *> *> *> *)process_and_batch:(NSArray<KKRawContactItem *> *)raw_contacts
-                                                                         max_count:(NSInteger)max_count
-                                                                         per_count:(NSInteger)per_count;
 @end
 
 NS_ASSUME_NONNULL_END

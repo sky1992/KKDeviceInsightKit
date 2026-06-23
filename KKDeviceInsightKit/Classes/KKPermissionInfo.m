@@ -58,29 +58,53 @@
     [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
         if (settings.authorizationStatus == UNAuthorizationStatusNotDetermined) {
             [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:(UNAuthorizationOptionAlert | UNAuthorizationOptionSound) completionHandler:^(BOOL granted, NSError * _Nullable error) {
-                completion([self result:(granted ? KKPermissionStatusAllowed : KKPermissionStatusDenied) first:YES]);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    completion([self result:(granted ? KKPermissionStatusAllowed : KKPermissionStatusDenied) first:YES]);
+                });
             }];
             return;
         }
-        if (settings.authorizationStatus == UNAuthorizationStatusAuthorized) completion([self result:KKPermissionStatusAllowed first:NO]);
-        else if (settings.authorizationStatus == UNAuthorizationStatusProvisional || settings.authorizationStatus == UNAuthorizationStatusEphemeral) completion([self result:KKPermissionStatusLimited first:NO]);
-        else completion([self result:KKPermissionStatusDenied first:NO]);
+        if (settings.authorizationStatus == UNAuthorizationStatusAuthorized) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completion([self result:KKPermissionStatusAllowed first:NO]);
+            });
+        }
+        else if (settings.authorizationStatus == UNAuthorizationStatusProvisional || settings.authorizationStatus == UNAuthorizationStatusEphemeral) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completion([self result:KKPermissionStatusLimited first:NO]);
+            });
+        }
+        else {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completion([self result:KKPermissionStatusDenied first:NO]);
+            });
+        }
     }];
 }
 + (void)request_contacts_permission:(void(^)(KKPermissionResult *))completion {
     if ([CNContactStore authorizationStatusForEntityType:CNEntityTypeContacts] != CNAuthorizationStatusNotDetermined) {
-        completion([self contacts_permission]); return;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completion([self contacts_permission]);
+        });
+        return;
     }
     [[[CNContactStore alloc] init] requestAccessForEntityType:CNEntityTypeContacts completionHandler:^(BOOL granted, NSError * _Nullable error) {
-        completion([self contacts_first_permission]);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completion([self contacts_first_permission]);
+        });
     }];
 }
 + (void)request_camera_permission:(void(^)(KKPermissionResult *))completion {
     if ([AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo] != AVAuthorizationStatusNotDetermined) {
-        completion([self camera_permission]); return;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completion([self camera_permission]);
+        });
+        return;
     }
     [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
-        completion([self camera_first_permission]);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completion([self camera_first_permission]);
+        });
     }];
 }
 @end

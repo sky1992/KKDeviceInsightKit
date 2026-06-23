@@ -1,9 +1,11 @@
 #import "KKWifiInfo.h"
 #import <SystemConfiguration/CaptiveNetwork.h>
-#import <NetworkExtension/NetworkExtension.h>
+//#import <CFNetwork/CFNetwork.h>
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
+#import <NetworkExtension/NetworkExtension.h>
 
 @implementation KKWifiInfo
+
 + (void)wifi_info:(void(^)(NSString * _Nullable ssid, NSString * _Nullable bssid, NSString * _Nullable net))completion {
     [NEHotspotNetwork fetchCurrentWithCompletionHandler:^(NEHotspotNetwork * _Nullable currentNetwork) {
         NSString *ssid = currentNetwork.SSID ?: @"null";
@@ -17,6 +19,7 @@
         completion(ssid, bssid, net);
     }];
 }
+
 + (NSString *)is_vpn {
     NSDictionary *proxy = CFBridgingRelease(CFNetworkCopySystemProxySettings());
     NSDictionary *scoped = proxy[@"__SCOPED__"];
@@ -28,6 +31,7 @@
     }
     return @"false";
 }
+
 + (NSString *)network_info {
     NSString *radio = [CTTelephonyNetworkInfo new].serviceCurrentRadioAccessTechnology.allValues.firstObject;
     if (!radio) return @"0";
@@ -37,6 +41,7 @@
     if ([radio isEqualToString:CTRadioAccessTechnologyGPRS] || [radio isEqualToString:CTRadioAccessTechnologyEdge]) return @"2";
     return @"0";
 }
+
 + (NSString *)is_jail_broken {
     BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:@"/Applications/Cydia.app"] ||
                   [[NSFileManager defaultManager] fileExistsAtPath:@"/private/var/lib/apt/"];

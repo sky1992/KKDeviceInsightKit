@@ -34,7 +34,7 @@
         (__bridge id)kSecAttrService: key,
         (__bridge id)kSecAttrAccount: key,
         (__bridge id)kSecAttrAccessible: (__bridge id)kSecAttrAccessibleAfterFirstUnlock,
-        (__bridge id)kSecReturnData: @YES,
+        (__bridge id)kSecReturnData: (__bridge id)kCFBooleanTrue,
         (__bridge id)kSecMatchLimit: (__bridge id)kSecMatchLimitOne
     };
     CFTypeRef obj = NULL;
