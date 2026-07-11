@@ -10,7 +10,7 @@
     NSString *key = [NSString stringWithFormat:@"%@.id.some.app", bundle];
     NSString *saved = [self fetch_device_id:key];
     if (saved.length > 0) return saved;
-    NSString *newID = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
+    NSString *newID = [[NSUUID UUID] UUIDString];
     if (newID.length == 0) newID = @"null";
     [self save_device_id:newID for_key:key];
     return newID;

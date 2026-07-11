@@ -54,17 +54,22 @@
 }
 
 
-+ (void)notification_permission:(void(^)(KKPermissionResult *))completion {
++ (void)notification_permission:(BOOL)isRequest completion:(void(^)(KKPermissionResult *))completion {
     [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
         if (settings.authorizationStatus == UNAuthorizationStatusNotDetermined) {
-            [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:(UNAuthorizationOptionAlert | UNAuthorizationOptionSound) completionHandler:^(BOOL granted, NSError * _Nullable error) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    completion([self result:(granted ? KKPermissionStatusAllowed : KKPermissionStatusDenied) first:YES]);
-                });
-            }];
-            return;
+            if (isRequest) {
+                [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:(UNAuthorizationOptionAlert | UNAuthorizationOptionSound) completionHandler:^(BOOL granted, NSError * _Nullable error) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        completion([self result:(granted ? KKPermissionStatusAllowed : KKPermissionStatusDenied) first:YES]);
+                    });
+                }];
+                return;
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completion([self result:KKPermissionStatusDenied first:YES]);
+            });
         }
-        if (settings.authorizationStatus == UNAuthorizationStatusAuthorized) {
+        else if (settings.authorizationStatus == UNAuthorizationStatusAuthorized) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 completion([self result:KKPermissionStatusAllowed first:NO]);
             });
