@@ -54,22 +54,9 @@
 }
 
 
-+ (void)notification_permission:(BOOL)isRequest completion:(void(^)(KKPermissionResult *))completion {
++ (void)notification_permission:(void(^)(KKPermissionResult *))completion {
     [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
-        if (settings.authorizationStatus == UNAuthorizationStatusNotDetermined) {
-            if (isRequest) {
-                [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:(UNAuthorizationOptionAlert | UNAuthorizationOptionSound) completionHandler:^(BOOL granted, NSError * _Nullable error) {
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        completion([self result:(granted ? KKPermissionStatusAllowed : KKPermissionStatusDenied) first:YES]);
-                    });
-                }];
-                return;
-            }
-            dispatch_async(dispatch_get_main_queue(), ^{
-                completion([self result:KKPermissionStatusDenied first:YES]);
-            });
-        }
-        else if (settings.authorizationStatus == UNAuthorizationStatusAuthorized) {
+        if (settings.authorizationStatus == UNAuthorizationStatusAuthorized) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 completion([self result:KKPermissionStatusAllowed first:NO]);
             });
@@ -86,6 +73,21 @@
         }
     }];
 }
+
++ (void)request_notification_permission:(void(^)(KKPermissionResult *))completion {
+    [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
+        if (settings.authorizationStatus == UNAuthorizationStatusNotDetermined) {
+            [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:(UNAuthorizationOptionAlert | UNAuthorizationOptionSound) completionHandler:^(BOOL granted, NSError * _Nullable error) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    completion([self result:(granted ? KKPermissionStatusAllowed : KKPermissionStatusDenied) first:YES]);
+                });
+            }];
+        }else {
+            completion([self result:(settings.authorizationStatus == UNAuthorizationStatusAuthorized ? KKPermissionStatusAllowed : KKPermissionStatusDenied) first:NO]);
+        }
+    }];
+}
+
 + (void)request_contacts_permission:(void(^)(KKPermissionResult *))completion {
     if ([CNContactStore authorizationStatusForEntityType:CNEntityTypeContacts] != CNAuthorizationStatusNotDetermined) {
         dispatch_async(dispatch_get_main_queue(), ^{

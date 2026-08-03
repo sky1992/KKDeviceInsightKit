@@ -24,7 +24,7 @@ static KKLocationDelegateOC *_kk_loc_delegate = nil;
 }
 
 + (KKPermissionResult *)location_permission {
-    CLAuthorizationStatus s = [CLLocationManager authorizationStatus];
+    CLAuthorizationStatus s = _kk_loc_mgr.authorizationStatus;
     KKPermissionResult *r = [KKPermissionResult new];
     if (s == kCLAuthorizationStatusAuthorizedAlways || s == kCLAuthorizationStatusAuthorizedWhenInUse) {
         r.status = KKPermissionStatusAllowed;
@@ -36,7 +36,7 @@ static KKLocationDelegateOC *_kk_loc_delegate = nil;
 }
 
 + (KKPermissionResult *)location_change_permission {
-    CLAuthorizationStatus s = [CLLocationManager authorizationStatus];
+    CLAuthorizationStatus s = _kk_loc_mgr.authorizationStatus;
     KKPermissionResult *r = [KKPermissionResult new];
     if (s == kCLAuthorizationStatusAuthorizedAlways || s == kCLAuthorizationStatusAuthorizedWhenInUse) {
         r.status = KKPermissionStatusAllowed;
@@ -48,7 +48,7 @@ static KKLocationDelegateOC *_kk_loc_delegate = nil;
 }
 
 + (void)request_location_permission:(void(^)(KKPermissionResult *))completion {
-    CLAuthorizationStatus s = [CLLocationManager authorizationStatus];
+    CLAuthorizationStatus s = _kk_loc_mgr.authorizationStatus;
     KKPermissionResult *r = [KKPermissionResult new];
     if (s == kCLAuthorizationStatusAuthorizedAlways || s == kCLAuthorizationStatusAuthorizedWhenInUse) {
         r.status = KKPermissionStatusAllowed;
@@ -67,7 +67,7 @@ static KKLocationDelegateOC *_kk_loc_delegate = nil;
 }
 
 + (void)request_location_coordinate_string:(void(^)(KKPermissionResult *, NSString *, NSString *))completion {
-    CLAuthorizationStatus s = [CLLocationManager authorizationStatus];
+    CLAuthorizationStatus s = _kk_loc_mgr.authorizationStatus;
     void (^start)(void) = ^{
         [_kk_loc_delegate.lock lock];
         _kk_loc_delegate.coordinate_completion = completion;
@@ -95,7 +95,7 @@ static KKLocationDelegateOC *_kk_loc_delegate = nil;
 @implementation KKLocationDelegateOC (Callbacks)
 
 - (void)locationManagerDidChangeAuthorization:(CLLocationManager *)manager {
-    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined) {
+    if ([manager authorizationStatus] == kCLAuthorizationStatusNotDetermined) {
         return;
     }
     if (self.permission_completion) {
