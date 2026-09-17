@@ -110,7 +110,11 @@
         @"iPhone18,2": @"iPhone 17 Pro Max",
         @"iPhone18,3": @"iPhone 17",
         @"iPhone18,4": @"iPhone Air",
-        
+        @"iPhone19,2": @"iPhone 18 Pro",
+        @"iPhone19,3": @"iPhone 18 Pro Max (USA)",
+        @"iPhone19,4": @"iPhone Duo",
+        @"iPhone19,7": @"iPhone 18 Pro Max",
+
         // iPad
         @"iPad2,5": @"iPad Mini",
         @"iPad2,6": @"iPad Mini",
