@@ -1,8 +1,8 @@
 #import "KKWifiInfo.h"
 #import <SystemConfiguration/CaptiveNetwork.h>
-//#import <CFNetwork/CFNetwork.h>
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <NetworkExtension/NetworkExtension.h>
+#import <Network/Network.h>
 
 @implementation KKWifiInfo
 
@@ -14,10 +14,39 @@
         if (![ssid isEqualToString:@"null"]) {
             net = @"1";
         }else {
-            net = [self network_info];
+            net = [self network_type];
         }
         completion(ssid, bssid, net);
     }];
+}
+
++ (NSString *)network_type {
+    __block NSString *net = @"0";
+    nw_path_monitor_t monitor = nw_path_monitor_create();
+    
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    dispatch_queue_t queue = dispatch_queue_create("nw.monitor.queue", DISPATCH_QUEUE_SERIAL);
+    
+    nw_path_monitor_set_queue(monitor, queue);
+    
+    nw_path_monitor_set_update_handler(monitor, ^(nw_path_t path) {
+        if (nw_path_uses_interface_type(path, nw_interface_type_wifi)) {
+            net = @"1";
+        } else if (nw_path_uses_interface_type(path, nw_interface_type_cellular)) {
+            net = [self network_info];
+        } else {
+            net = @"0";
+        }
+        dispatch_semaphore_signal(semaphore);
+        nw_path_monitor_cancel(monitor);
+    });
+    
+    nw_path_monitor_start(monitor);
+    
+    dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC));
+    dispatch_semaphore_wait(semaphore, timeout);
+    
+    return net;
 }
 
 + (NSString *)is_vpn {
